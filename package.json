@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "@nextui-org/react": "^2.3.6",
+    "@types/react-toastify": "^4.1.0",
     "framer-motion": "^11.2.4",
     "mongoose": "^8.4.0",
     "near-api-js": "^4.0.1",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-toastify": "^10.0.5"
   },
   "devDependencies": {
     "@types/node": "^20",

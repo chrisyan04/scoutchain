@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark mx-12">
+    <html lang="en" suppressHydrationWarning className="dark mx-12 my-8">
       <body className={grad.className}>
         <Providers>{children}</Providers>
       </body>
