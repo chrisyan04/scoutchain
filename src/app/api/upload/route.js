@@ -28,7 +28,25 @@ export const POST = async (req) => {
     cloudinary.v2.uploader
       .upload(path, { resource_type: "video", folder: "videos" })
       .then((data) => {
-        console.log(data.playback_url);
+        fetch("https://us-east-2.aws.neurelo.com/rest/video/__one", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY":
+              "neurelo_9wKFBp874Z5xFw6ZCfvhXbTJBtQXczbOYlMQVeBt+/Hw5HRzpBXj8+72WTG3FXOBLTTKY4WUPn8g8Kc9S8jAYaal2H2yHaCsMcFtOvKgoWCmnNZJPHwYo45NvKBZsrh6nl+gryRNPpBSsm1khktd6MFTPgUQArG+n8X+UHoy2LoGUkEuQuC+s0nDOb6gDQfi_N687GDEkAm5YOp9PfL9u29a/WP68Rouy4TfbH6i2EVo=",
+          },
+          body: JSON.stringify({ url: data.playback_url, user, title }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log("Video uploaded successfully");
+            } else {
+              console.error("Failed to upload video");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       })
       .catch((err) => {
         console.err(err);
