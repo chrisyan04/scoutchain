@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/react";
 
 export default function VideoCard() {
-  const scoutVidId = "default";
+  const scoutVidId = "Test-Title";
 
   return (
     <div>
@@ -22,7 +22,6 @@ export default function VideoCard() {
           <CardHeader className="flex justify-between">
             <div className="items-start flex-col text-left">
               <p className="uppercase font-bold text-[#d4af37]">Title</p>
-              <small className="">Date</small>
               <h4>
                 {"Reviews: "}
                 <span className="text-[#d4af37] font-bold">{"10"}</span>
