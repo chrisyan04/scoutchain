@@ -2,26 +2,28 @@ import React from "react";
 import placeholder from "@/public/placeholder.jpeg";
 import premiumIcon from "@/public/premiumIcon.svg";
 import Image from "next/image";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Button,
-  Link,
-  Divider,
-} from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Divider, Link } from "@nextui-org/react";
 
-export default function VideoCard() {
-  const scoutVidId = "Test-Title";
+interface VideoCardProps {
+  video: {
+    _id: string;
+    title: string;
+    url: string;
+    user: string;
+  };
+}
+
+export default function VideoCard({ video }: VideoCardProps) {
 
   return (
     <div>
-      <Link href={`/${scoutVidId}`}>
+      <Link href={`/${video._id}`}>
         <Card isPressable>
           <CardHeader className="flex justify-between">
             <div className="items-start flex-col text-left">
-              <p className="uppercase font-bold text-[#d4af37]">Title</p>
+              <p className="uppercase font-bold text-[#d4af37]">
+                {video.title}
+              </p>
               <h4>
                 {"Reviews: "}
                 <span className="text-[#d4af37] font-bold">{"10"}</span>
@@ -41,9 +43,9 @@ export default function VideoCard() {
           <CardBody>
             <Image
               src={placeholder}
-              alt="placeholder"
+              alt="thumbnail"
               height={200}
-              width={200}
+              width={300}
             />
           </CardBody>
         </Card>

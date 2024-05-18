@@ -9,14 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cloudinary/url-gen": "^1.19.0",
     "@google-cloud/storage": "^7.11.0",
     "@nextui-org/react": "^2.3.6",
+    "@types/react-toastify": "^4.1.0",
+    "axios": "^1.6.8",
     "cloudinary": "^2.2.0",
+    "cloudinary-video-player": "^2.0.2",
     "formidable": "^3.5.1",
     "framer-motion": "^11.2.4",
     "fs": "^0.0.1-security",
-    "@types/react-toastify": "^4.1.0",
-    "cloudinary-video-player": "^2.0.2",
     "mongoose": "^8.4.0",
     "near-api-js": "^4.0.1",
     "next": "14.2.3",
