@@ -11,6 +11,7 @@
   "dependencies": {
     "@nextui-org/react": "^2.3.6",
     "framer-motion": "^11.2.4",
+    "mongoose": "^8.4.0",
     "near-api-js": "^4.0.1",
     "next": "14.2.3",
     "react": "^18",
