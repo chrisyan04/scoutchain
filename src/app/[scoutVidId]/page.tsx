@@ -9,7 +9,7 @@ export default function VideoDetails({ params }: {
   };
 }) {
   return (
-    <div>
+    <div className="items-center">
       <Link href="/">
         <Button>
           <div className="flex items-center">
@@ -18,7 +18,9 @@ export default function VideoDetails({ params }: {
           </div>
         </Button>
       </Link>
-      Details {params.scoutVidId}
+      <h2 className="text-center justify-center flex text-4xl">
+        {"Video: "}&nbsp;<span className='text-[#d4af37]'>{params.scoutVidId}</span>
+      </h2>
     </div>
   );
 }
