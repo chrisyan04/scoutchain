@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useState } from "react";
-import { uploadFile } from "@/actions/upload";
 
 const Upload = () => {
   const [title, setTitle] = useState("");
