@@ -25,6 +25,7 @@ import nearIcon from "@/public/nearIcon.svg";
 import * as nearAPI from "near-api-js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import outputVideo from "@/public/output_video7.mp4";
 
 interface VideoData {
   id: string;
@@ -298,16 +299,16 @@ export default function VideoDetails({
           <h2 className="text-center underline text-xl">AI Analyzed Data</h2>
           <div className="flex flex-col gap-2">
             <h4>
-              <span className="text-[#d4af37]">{"Emotion: "}</span>
-              {"Happy"}
+              <span className="text-[#d4af37]">{"Top Speed: "}</span>
+              {"25.2 km/h"}
             </h4>
             <h4>
-              <span className="text-[#d4af37]">{"Age: "}</span>
-              {"25"}
+              <span className="text-[#d4af37]">{"Top Distance: "}</span>
+              {"64.98 m"}
             </h4>
             <h4>
-              <span className="text-[#d4af37]">{"Speed: "}</span>
-              {"96"}
+              <span className="text-[#d4af37]">{"Ball Possession: "}</span>
+              {"42 %"}
             </h4>
           </div>
         </div>
@@ -453,7 +454,7 @@ export default function VideoDetails({
                   className=""
                   width={1640}
                   height={1080}
-                  src={videoData.url}
+                  src="https://res.cloudinary.com/dyhkvcl9v/video/upload/v1716107319/videos/sgfmu3bhfqchmc2bwecg.mp4"
                   colors={{
                     accent: "#d4af37",
                     base: "#d4af37",
