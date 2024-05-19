@@ -3,7 +3,16 @@
 import React, { useEffect, useState } from "react";
 import backIcon from "@/public/backIcon.svg";
 import Image from "next/image";
-import { Link, Button } from "@nextui-org/react";
+import {
+  Link,
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
 import { CldVideoPlayer } from "next-cloudinary";
 import "next-cloudinary/dist/cld-video-player.css";
 
@@ -63,6 +72,8 @@ export default function VideoDetails({
   // console.log("scoutVidId:", params.scoutVidId);
   console.log("videoData:", videoData);
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
     <div className="items-center">
       <Link href="/">
@@ -77,6 +88,15 @@ export default function VideoDetails({
         {"Video: "}&nbsp;
         <span className="text-[#d4af37]">{videoData.title || ""}</span>
       </h2>
+      <Button className="" onPress={onOpen}>Open Video</Button>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <CldVideoPlayer
         className=""
         width={800}
