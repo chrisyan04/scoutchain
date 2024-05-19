@@ -31,7 +31,7 @@ export default function VideoCard({ video }: VideoCardProps) {
                 {video.title}
               </p>
               <h4>
-                {"Reviews: "}
+                {"Reports: "}
                 <span className="text-[#d4af37] font-bold">{"10"}</span>
               </h4>
             </div>
