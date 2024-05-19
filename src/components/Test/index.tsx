@@ -88,13 +88,24 @@ export default function Test() {
 
   return (
     <div>
-      <div>{connectionStatus}</div>
-      <Input
+      <div>
+        <span className="text-[#d4af37]">{"yanner.testnet: "}</span>
+        <span
+          className={
+            connectionStatus === "Connected"
+              ? "text-[#00ff00]"
+              : "text-[#ff0000]"
+          }
+        >
+          {connectionStatus}
+        </span>
+      </div>
+      {/* <Input
         value={receiverId}
         onChange={(e) => setReceiverId(e.target.value)}
         placeholder="Enter receiver's ID"
-      />
-      <Button
+      /> */}
+      {/* <Button
         onClick={sendMoney}
         disabled={loading || !walletAccountObj || !receiverId}
       >
@@ -104,7 +115,7 @@ export default function Test() {
           "Send Money"
         )}
       </Button>
-      <ToastContainer />
+      <ToastContainer /> */}
     </div>
   );
 }

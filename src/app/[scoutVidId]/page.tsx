@@ -1,3 +1,5 @@
+// /mnt/data/page.tsx
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -20,6 +22,9 @@ import {
 import { CldVideoPlayer } from "next-cloudinary";
 import "next-cloudinary/dist/cld-video-player.css";
 import nearIcon from "@/public/nearIcon.svg";
+import * as nearAPI from "near-api-js";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface VideoData {
   id: string;
@@ -39,9 +44,7 @@ interface Report {
 export default function VideoDetails({
   params,
 }: {
-  params: {
-    scoutVidId: string;
-  };
+  params: { scoutVidId: string };
 }) {
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +64,29 @@ export default function VideoDetails({
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [report, setReport] = useState<string>("");
   const [emptyReport, setEmptyReport] = useState<boolean>(false);
+  const { connect, keyStores, WalletConnection } = nearAPI;
+  const [myKeyStore, setMyKeyStore] =
+    useState<nearAPI.keyStores.KeyStore | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState("Not connected");
+  const [loading, setLoading] = useState(false);
+  const [walletAccountObj, setWalletAccountObj] =
+    useState<nearAPI.Account | null>(null);
+  const [receiverId, setReceiverId] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setMyKeyStore(new keyStores.BrowserLocalStorageKeyStore());
+    }
+  }, []);
+
+  const connectionConfig = {
+    networkId: "testnet",
+    keyStore: myKeyStore,
+    nodeUrl: "https://rpc.testnet.near.org",
+    walletUrl: "https://testnet.mynearwallet.com/",
+    helperUrl: "https://helper.testnet.near.org",
+    explorerUrl: "https://testnet.nearblocks.io",
+  };
 
   const addReport = async () => {
     if (!report) {
@@ -82,20 +108,77 @@ export default function VideoDetails({
           },
           body: JSON.stringify({
             feedback: report,
-            user: videoData?.user,
+            user: "yanner.testnet",
             video: params.scoutVidId,
           }),
         }
       );
+
       if (!response.ok) {
         throw new Error("Failed to add report");
       }
+
       setAddModalOpen(false);
-      setReport(""); // Clear report input after adding
+      setReport("");
+      setLoading(true);
+
+      const amount = BigInt(1000000000000000000000);
+      if (walletAccountObj) {
+        const result = await walletAccountObj.sendMoney(
+          videoData!.user,
+          amount
+        );
+        console.log("Transaction result:", result);
+        window.location.reload();
+        toast.success("$NEAR claimed successfully!");
+      }
     } catch (error) {
       console.error("Error adding report:", error);
+      console.error("Error sending money:", error);
+      toast.error("$NEAR claim failed!");
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (myKeyStore) {
+      const connectToNear = async () => {
+        try {
+          const nearConnection = await connect({
+            ...connectionConfig,
+            keyStore: myKeyStore,
+          });
+          const walletConnection = new WalletConnection(
+            nearConnection,
+            "testing"
+          );
+          console.log("Wallet connection:", walletConnection);
+
+          const url = await walletConnection.requestSignInUrl({
+            contractId: "yanner.testnet",
+          });
+          setConnectionStatus("Connected");
+          console.log("URL:", url);
+
+          if (walletConnection.isSignedIn()) {
+            const walletAccountId = walletConnection.getAccountId();
+            const walletAccount = walletConnection.account();
+            console.log("Wallet account object:", walletAccount);
+
+            const accountBalance = await walletAccount.getAccountBalance();
+            console.log("Account balance:", accountBalance);
+
+            setWalletAccountObj(walletAccount);
+          }
+        } catch (error) {
+          console.log("Error connecting to NEAR:", error);
+          setConnectionStatus("Failed to connect");
+        }
+      };
+      connectToNear();
+    }
+  }, [myKeyStore]);
 
   useEffect(() => {
     const fetchVideoData = async () => {
@@ -111,9 +194,11 @@ export default function VideoDetails({
             },
           }
         );
+
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
+
         const { data } = await response.json();
         setVideoData(data);
       } catch (error) {
@@ -140,9 +225,11 @@ export default function VideoDetails({
               },
             }
           );
+
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
           }
+
           const { data } = await response.json();
           const filteredData = data.filter(
             (report: any) => report.video === videoData.id
@@ -228,7 +315,7 @@ export default function VideoDetails({
       <div className="text-center flex flex-col items-center justify-center my-4">
         <h2 className="text-4xl py-2">Reports</h2>
         <div className="">
-          {videoData.user !== "orhanbc.testnet" && (
+          {videoData.user !== "yanner.testnet" && (
             <Card
               className="my-3 w-[500px] px-4 bg-[#d4af37]"
               isPressable
@@ -413,6 +500,7 @@ export default function VideoDetails({
                   <textarea
                     className="w-full h-[200px] p-2"
                     placeholder="Enter your report here..."
+                    value={report}
                     onChange={(e) => setReport(e.target.value)}
                   ></textarea>
                 </div>
@@ -429,6 +517,7 @@ export default function VideoDetails({
           )}
         </ModalContent>
       </Modal>
+      <ToastContainer />
     </>
   );
 }
