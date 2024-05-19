@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import VideoCard from "./VideoCard";
+import { Button } from "@nextui-org/react";
+import Link from "next/link";
 
 interface VideoData {
   _id: string;
@@ -68,9 +70,19 @@ export default function Dashboard() {
 
   return (
     <section>
-      <h1 className="text-center text-5xl font-bold my-8 text-[#d4af37]">
-        Dashboard
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="justify-center text-center text-5xl font-bold my-8 text-[#d4af37]">
+          Dashboard
+        </h1>
+        <Link href="/upload" className="justify-end">
+          <Button>
+            <div className="flex items-center">
+              <h3 className="text-xl text-[#d4af37]">Upload</h3>
+            </div>
+          </Button>
+        </Link>
+      </div>
+
       <div className="gap-4 grid grid-cols-4">
         {videos.map((video) => (
           <VideoCard key={video._id} video={video} />
