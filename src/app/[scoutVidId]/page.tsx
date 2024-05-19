@@ -20,20 +20,20 @@ import {
 import { CldVideoPlayer } from "next-cloudinary";
 import "next-cloudinary/dist/cld-video-player.css";
 import nearIcon from "@/public/nearIcon.svg";
-import { set } from "mongoose";
 
 interface VideoData {
-  id: any;
+  id: string;
   title: string;
   url: string;
   user: string;
-  index: number;
 }
+
 interface Report {
   id: string;
   user: string;
   feedback: string;
   video: string;
+  index: number;
 }
 
 export default function VideoDetails({
@@ -45,11 +45,20 @@ export default function VideoDetails({
 }) {
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [reportData, setReportData] = useState<any[]>([]);
+  const {
+    isOpen: isOriginalOpen,
+    onOpen: onOriginalOpen,
+    onOpenChange: onOriginalOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: isAnalyzedOpen,
+    onOpen: onAnalyzedOpen,
+    onOpenChange: onAnalyzedOpenChange,
+  } = useDisclosure();
+  const [reportData, setReportData] = useState<Report[]>([]);
   const [isReportModalOpen, setReportModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-  const [isAddModalOpen, setAddModal] = useState(false);
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [report, setReport] = useState<string>("");
   const [emptyReport, setEmptyReport] = useState<boolean>(false);
 
@@ -81,7 +90,8 @@ export default function VideoDetails({
       if (!response.ok) {
         throw new Error("Failed to add report");
       }
-      setAddModal(false);
+      setAddModalOpen(false);
+      setReport(""); // Clear report input after adding
     } catch (error) {
       console.error("Error adding report:", error);
     }
@@ -156,9 +166,6 @@ export default function VideoDetails({
     return <div>Loading...</div>;
   }
 
-  // console.log("scoutVidId:", params.scoutVidId);
-  // console.log("videoData:", videoData);
-
   return (
     <>
       <Link href="/">
@@ -177,10 +184,10 @@ export default function VideoDetails({
           </h2>
         </div>
         <div className="my-4">
-          <Button className="text-[#d4af37] mx-4" onPress={onOpen}>
+          <Button className="text-[#d4af37] mx-4" onPress={onOriginalOpen}>
             Open Original Video
           </Button>
-          <Button className="text-[#d4af37] mx-4" onPress={onOpen}>
+          <Button className="text-[#d4af37] mx-4" onPress={onAnalyzedOpen}>
             Open Analyzed Video
           </Button>
         </div>
@@ -225,7 +232,7 @@ export default function VideoDetails({
             <Card
               className="my-3 w-[500px] px-4 bg-[#d4af37]"
               isPressable
-              onClick={() => setAddModal(true)}
+              onClick={() => setAddModalOpen(true)}
             >
               <CardBody>
                 <div className="flex justify-center items-center">
@@ -236,17 +243,6 @@ export default function VideoDetails({
               </CardBody>
             </Card>
           )}
-          {reportData.map((report, index) => (
-            <Card
-              key={report.id}
-              className="my-3 w-[500px] px-4"
-              isPressable
-              onClick={() => {
-                report.index = index;
-                setSelectedReport(report);
-                setReportModalOpen(true);
-              }}
-            >
           {reportData.length > 0 ? (
             reportData.map((report, index) => (
               <Card
@@ -320,7 +316,45 @@ export default function VideoDetails({
           )}
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
+      <Modal
+        isOpen={isOriginalOpen}
+        onOpenChange={onOriginalOpenChange}
+        size="3xl"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <span className="text-[#d4af37]">{videoData.title || ""}</span>
+              </ModalHeader>
+              <ModalBody>
+                <CldVideoPlayer
+                  className=""
+                  width={1640}
+                  height={1080}
+                  src={videoData.url}
+                  colors={{
+                    accent: "#d4af37",
+                    base: "#d4af37",
+                    text: "#d4af37",
+                  }}
+                  fontFace="Source Serif Pro"
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isAnalyzedOpen}
+        onOpenChange={onAnalyzedOpenChange}
+        size="3xl"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -352,7 +386,7 @@ export default function VideoDetails({
       </Modal>
       <Modal
         isOpen={isAddModalOpen}
-        onOpenChange={() => setAddModal(!isAddModalOpen)}
+        onOpenChange={() => setAddModalOpen(!isAddModalOpen)}
         size="3xl"
       >
         <ModalContent>
