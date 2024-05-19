@@ -2,7 +2,13 @@ import React from "react";
 import placeholder from "@/public/placeholder.jpeg";
 import premiumIcon from "@/public/premiumIcon.svg";
 import Image from "next/image";
-import { Card, CardHeader, CardBody, Divider, Link } from "@nextui-org/react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Divider,
+  Link,
+} from "@nextui-org/react";
 
 interface VideoCardProps {
   video: {
