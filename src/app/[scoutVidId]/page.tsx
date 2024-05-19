@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import backIcon from "@/public/backIcon.svg";
+import addIcon from "@/public/addIcon.svg";
 import Image from "next/image";
 import {
   Link,
@@ -19,6 +20,7 @@ import {
 import { CldVideoPlayer } from "next-cloudinary";
 import "next-cloudinary/dist/cld-video-player.css";
 import nearIcon from "@/public/nearIcon.svg";
+import { set } from "mongoose";
 
 interface VideoData {
   id: any;
@@ -47,6 +49,43 @@ export default function VideoDetails({
   const [reportData, setReportData] = useState<any[]>([]);
   const [isReportModalOpen, setReportModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [isAddModalOpen, setAddModal] = useState(false);
+  const [report, setReport] = useState<string>("");
+  const [emptyReport, setEmptyReport] = useState<boolean>(false);
+
+  const addReport = async () => {
+    if (!report) {
+      setEmptyReport(true);
+      return;
+    }
+
+    setEmptyReport(false);
+
+    try {
+      const response = await fetch(
+        `https://us-east-2.aws.neurelo.com/rest/report/__one`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY":
+              "neurelo_9wKFBp874Z5xFw6ZCfvhXbTJBtQXczbOYlMQVeBt+/Hw5HRzpBXj8+72WTG3FXOBLTTKY4WUPn8g8Kc9S8jAYaal2H2yHaCsMcFtOvKgoWCmnNZJPHwYo45NvKBZsrh6nl+gryRNPpBSsm1khktd6MFTPgUQArG+n8X+UHoy2LoGUkEuQuC+s0nDOb6gDQfi_N687GDEkAm5YOp9PfL9u29a/WP68Rouy4TfbH6i2EVo=",
+          },
+          body: JSON.stringify({
+            feedback: report,
+            user: videoData?.user,
+            video: params.scoutVidId,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to add report");
+      }
+      setAddModal(false);
+    } catch (error) {
+      console.error("Error adding report:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchVideoData = async () => {
@@ -96,8 +135,7 @@ export default function VideoDetails({
           }
           const { data } = await response.json();
           const filteredData = data.filter(
-            (report: any) =>
-              report.video === videoData.id
+            (report: any) => report.video === videoData.id
           );
           setReportData(filteredData);
         } catch (error) {
@@ -183,6 +221,21 @@ export default function VideoDetails({
       <div className="text-center flex flex-col items-center justify-center my-4">
         <h2 className="text-4xl py-2">Reports</h2>
         <div className="">
+          {videoData.user !== "orhanbc.testnet" && (
+            <Card
+              className="my-3 w-[500px] px-4 bg-[#d4af37]"
+              isPressable
+              onClick={() => setAddModal(true)}
+            >
+              <CardBody>
+                <div className="flex justify-center items-center">
+                  <Image src={addIcon} alt="add" height={30} width={30}></Image>
+                  &nbsp;
+                  <span className="text-black text-lg">Add Report</span>
+                </div>
+              </CardBody>
+            </Card>
+          )}
           {reportData.map((report, index) => (
             <Card
               key={report.id}
@@ -233,8 +286,8 @@ export default function VideoDetails({
                   <p className="invert">
                     +{" "}
                     {(
-                      ((selectedReport?.feedback.length || 0) / 250) *
-                      0.001 + 0.001
+                      ((selectedReport?.feedback.length || 0) / 250) * 0.001 +
+                      0.001
                     ).toFixed(3)}
                   </p>
                   &nbsp;
@@ -272,6 +325,51 @@ export default function VideoDetails({
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isAddModalOpen}
+        onOpenChange={() => setAddModal(!isAddModalOpen)}
+        size="3xl"
+      >
+        <ModalContent>
+          {(onAddClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <span className="text-[#d4af37]">Add Report</span>
+              </ModalHeader>
+              <ModalBody>
+                <div className="flex flex-col gap-4">
+                  <h3 className="text-[#d4af37]">
+                    Report &nbsp;
+                    {emptyReport && (
+                      <>
+                        (
+                        <span className="text-xs text-red-500">
+                          This field is required
+                        </span>
+                        )
+                      </>
+                    )}
+                    :
+                  </h3>
+                  <textarea
+                    className="w-full h-[200px] p-2"
+                    placeholder="Enter your report here..."
+                    onChange={(e) => setReport(e.target.value)}
+                  ></textarea>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="success" variant="light" onPress={addReport}>
+                  Add
+                </Button>
+                <Button color="danger" variant="light" onPress={onAddClose}>
+                  Cancel
                 </Button>
               </ModalFooter>
             </>
