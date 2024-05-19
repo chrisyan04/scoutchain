@@ -193,7 +193,7 @@ export default function VideoDetails({
           </h4>
           <h4 className="py-2">
             <span className="text-[#d4af37]">{"Reports: "}</span>
-            {"10"}
+            {reportData.length}
           </h4>
           <h4 className="py-2">
             <span className="text-[#d4af37]">{"ScoutVid++ (Premium): "}</span>
@@ -247,21 +247,40 @@ export default function VideoDetails({
                 setReportModalOpen(true);
               }}
             >
+          {reportData.length > 0 ? (
+            reportData.map((report, index) => (
+              <Card
+                key={report.id}
+                className="my-3 w-[500px] px-4"
+                isPressable
+                onClick={() => {
+                  report.index = index;
+                  setSelectedReport(report);
+                  setReportModalOpen(true);
+                }}
+              >
+                <CardBody>
+                  <div className="flex justify-between items-center">
+                    <Avatar
+                      isBordered
+                      radius="full"
+                      size="md"
+                      src={`https://nextui.org/avatars/avatar-${index + 4}.png`}
+                    />
+                    <span className="text-[#d4af37] text-sm">
+                      @{report.user || ""}
+                    </span>
+                  </div>
+                </CardBody>
+              </Card>
+            ))
+          ) : (
+            <Card className="my-3 w-[500px] px-4" isPressable>
               <CardBody>
-                <div className="flex justify-between items-center">
-                  <Avatar
-                    isBordered
-                    radius="full"
-                    size="md"
-                    src={`https://nextui.org/avatars/avatar-${index + 4}.png`}
-                  />
-                  <span className="text-[#d4af37] text-sm">
-                    @{report.user || ""}
-                  </span>
-                </div>
+                <p className="text-[#d4af37] text-center">No Current Reports</p>
               </CardBody>
             </Card>
-          ))}
+          )}
         </div>
       </div>
       <Modal
